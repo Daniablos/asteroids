@@ -1,8 +1,8 @@
 import pygame
-from constants import *
-from player import *
-from asteroid import *
-from asteroidfield import *
+from asteroids.constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from asteroids.entities.player import *
+from asteroids.entities.asteroid import *
+from asteroids.entities.asteroidfield import *
 
 def main():
     pygame.init
@@ -43,7 +43,6 @@ def main():
             if a.collision(player) == True:
                 raise SystemExit("Game over!")
         pygame.display.flip()
-        clock.tick(60)
         dt = clock.tick(60) / 1000
 
 

@@ -1,6 +1,7 @@
 import pygame
-from circleshape import *
-from constants import *
+from asteroids.entities.circleshape import CircleShape
+from asteroids.entities.shot import Shot
+from asteroids.constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN, PLAYER_SPEED
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -49,15 +50,3 @@ class Player(CircleShape):
                 self.shoot()
                 self.timer = PLAYER_SHOOT_COOLDOWN
             
-
-
-class Shot(CircleShape):
-    def __init__(self, x, y):
-        super().__init__(x, y, SHOT_RADIUS)
-
-    def draw(self, screen):
-        pygame.draw.circle(screen, "white", self.position, self.radius, 2)
-
-    def update(self, dt):
-        self.position += self.velocity * dt
-    
