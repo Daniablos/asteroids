@@ -1,11 +1,12 @@
 import pygame
 from asteroids.constants import SCREEN_WIDTH, SCREEN_HEIGHT
-from asteroids.entities.player import *
-from asteroids.entities.asteroid import *
-from asteroids.entities.asteroidfield import *
+from asteroids.entities.player import Player
+from asteroids.entities.asteroid import Asteroid
+from asteroids.entities.asteroidfield import AsteroidField
+from asteroids.entities.shot import Shot
 
 def main():
-    pygame.init
+    pygame.init()
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
