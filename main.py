@@ -1,17 +1,18 @@
 import pygame
-from asteroids.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from asteroids.entities.player import Player
 from asteroids.entities.asteroid import Asteroid
 from asteroids.entities.asteroidfield import AsteroidField
 from asteroids.entities.shot import Shot
+from asteroids.resolution import Resolution
 
 def main():
     pygame.init()
+    res = Resolution.info()
     print("Starting Asteroids!")
-    print(f"Screen width: {SCREEN_WIDTH}")
-    print(f"Screen height: {SCREEN_HEIGHT}")
+    print(f"Screen width: {res.width}")
+    print(f"Screen height: {res.height}")
 
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((res.width, res.height))
     clock = pygame.time.Clock()
     dt = 0
     running = True
@@ -26,7 +27,7 @@ def main():
     AsteroidField.containers = (updatable)
     Shot.containers = (shots, updatable, drawable)
 
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    player = Player(res.width / 2, res.height / 2)
     AsteroidField()
 
     while running:
