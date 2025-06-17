@@ -13,6 +13,8 @@ def main():
     print(f"Screen height: {res.height}")
 
     screen = pygame.display.set_mode((res.width, res.height))
+    background = pygame.image.load("./asteroids/assets/background_space.jpg")
+    background = pygame.transform.smoothscale(background, (res.width, res.height))
     clock = pygame.time.Clock()
     dt = 0
     running = True
@@ -34,7 +36,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.fill("black")
+        screen.blit(background, (0, 0))
         updatable.update(dt)
         for i in drawable:
             i.draw(screen)
