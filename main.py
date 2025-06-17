@@ -4,6 +4,7 @@ from asteroids.entities.asteroid import Asteroid
 from asteroids.entities.asteroidfield import AsteroidField
 from asteroids.entities.shot import Shot
 from asteroids.resolution import Resolution
+from asteroids.constants import FULLSCREEN
 
 def main():
     pygame.init()
@@ -12,7 +13,12 @@ def main():
     print(f"Screen width: {res.width}")
     print(f"Screen height: {res.height}")
 
-    screen = pygame.display.set_mode((res.width, res.height))
+    if FULLSCREEN:
+        flags = pygame.SCALED | pygame.FULLSCREEN
+    else:
+        flags = 0
+
+    screen = pygame.display.set_mode((res.width, res.height), flags)
     background = pygame.image.load("./asteroids/assets/background_space.jpg")
     background = pygame.transform.smoothscale(background, (res.width, res.height))
     clock = pygame.time.Clock()
