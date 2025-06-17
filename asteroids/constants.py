@@ -1,5 +1,5 @@
-SCREEN_WIDTH = 0
-SCREEN_HEIGHT = 0
+SCREEN_WIDTH = 1280 #if 0: uses current monitor width
+SCREEN_HEIGHT = 720 #if 0: uses current monitor height
 
 ASTEROID_MIN_RADIUS = 20
 ASTEROID_KINDS = 3
