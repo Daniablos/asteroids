@@ -1,39 +1,42 @@
 import pygame
 import random
 from asteroids.entities.asteroid import Asteroid
-from asteroids.constants import ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, ASTEROID_SPAWN_RATE, ASTEROID_KINDS
+from asteroids.constants import (
+    ASTEROID_MAX_RADIUS,
+    ASTEROID_MIN_RADIUS,
+    ASTEROID_SPAWN_RATE,
+    ASTEROID_KINDS,
+)
 from asteroids.resolution import Resolution
 
 
 class AsteroidField(pygame.sprite.Sprite):
-    
-
     def __init__(self):
         pygame.sprite.Sprite.__init__(self, self.containers)
         res = Resolution.info()
         self.spawn_timer = 0.0
         self.edges = [
-        [
-            pygame.Vector2(1, 0),
-            lambda y: pygame.Vector2(-ASTEROID_MAX_RADIUS, y * res.height),
-        ],
-        [
-            pygame.Vector2(-1, 0),
-            lambda y: pygame.Vector2(
-                res.width + ASTEROID_MAX_RADIUS, y * res.height
-            ),
-        ],
-        [
-            pygame.Vector2(0, 1),
-            lambda x: pygame.Vector2(x * res.width, -ASTEROID_MAX_RADIUS),
-        ],
-        [
-            pygame.Vector2(0, -1),
-            lambda x: pygame.Vector2(
-                x * res.width, res.height + ASTEROID_MAX_RADIUS
-            ),
-        ],
-    ]
+            [
+                pygame.Vector2(1, 0),
+                lambda y: pygame.Vector2(-ASTEROID_MAX_RADIUS, y * res.height),
+            ],
+            [
+                pygame.Vector2(-1, 0),
+                lambda y: pygame.Vector2(
+                    res.width + ASTEROID_MAX_RADIUS, y * res.height
+                ),
+            ],
+            [
+                pygame.Vector2(0, 1),
+                lambda x: pygame.Vector2(x * res.width, -ASTEROID_MAX_RADIUS),
+            ],
+            [
+                pygame.Vector2(0, -1),
+                lambda x: pygame.Vector2(
+                    x * res.width, res.height + ASTEROID_MAX_RADIUS
+                ),
+            ],
+        ]
 
     def spawn(self, radius, position, velocity):
         asteroid = Asteroid(position.x, position.y, radius)

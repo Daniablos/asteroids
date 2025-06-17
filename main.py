@@ -6,6 +6,7 @@ from asteroids.entities.shot import Shot
 from asteroids.resolution import Resolution
 from asteroids.constants import FULLSCREEN
 
+
 def main():
     pygame.init()
     res = Resolution.info()
@@ -32,7 +33,7 @@ def main():
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
 
     player = Player(res.width / 2, res.height / 2)
@@ -48,10 +49,10 @@ def main():
             i.draw(screen)
         for a in asteroids:
             for s in shots:
-                if s.collision(a) == True:
+                if s.collision(a) is True:
                     a.split()
                     s.kill()
-            if a.collision(player) == True:
+            if a.collision(player) is True:
                 raise SystemExit("Game over!")
         pygame.display.flip()
         dt = clock.tick(60) / 1000

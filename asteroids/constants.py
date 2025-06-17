@@ -1,6 +1,6 @@
 # 1280*720 resolution is recomended
-SCREEN_WIDTH = 1280 #if 0: uses current monitor width
-SCREEN_HEIGHT = 720 #if 0: uses current monitor height
+SCREEN_WIDTH = 1280  # if 0: uses current monitor width
+SCREEN_HEIGHT = 720  # if 0: uses current monitor height
 FULLSCREEN = False
 
 ASTEROID_MIN_RADIUS = 20
@@ -12,6 +12,6 @@ PLAYER_RADIUS = 20
 PLAYER_TURN_SPEED = 300
 PLAYER_SPEED = 200
 PLAYER_SHOOT_SPEED = 500
-PLAYER_SHOOT_COOLDOWN = 0.3 # seconds
+PLAYER_SHOOT_COOLDOWN = 0.3  # seconds
 
 SHOT_RADIUS = 5

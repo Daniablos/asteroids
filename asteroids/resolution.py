@@ -1,11 +1,12 @@
 import pygame
 from asteroids.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
+
 class Resolution:
     def __init__(self, height, width):
         self.height = height
         self.width = width
-    
+
     @classmethod
     def info(cls):
         info = pygame.display.Info()
