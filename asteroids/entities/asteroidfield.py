@@ -11,8 +11,9 @@ from asteroids.resolution import Resolution
 
 
 class AsteroidField(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self, self.containers)
+    def __init__(self, asteroid_groupe, *field_groups):
+        super().__init__(*field_groups) 
+        self.asteroid_groupe = asteroid_groupe       
         res = Resolution.info()
         self.spawn_timer = 0.0
         self.edges = [
@@ -39,7 +40,7 @@ class AsteroidField(pygame.sprite.Sprite):
         ]
 
     def spawn(self, radius, position, velocity):
-        asteroid = Asteroid(position.x, position.y, radius)
+        asteroid = Asteroid(position.x, position.y, radius, self.asteroid_groupe)
         asteroid.velocity = velocity
 
     def update(self, dt):

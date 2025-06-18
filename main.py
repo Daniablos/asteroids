@@ -1,8 +1,6 @@
 import pygame
 from asteroids.entities.player import Player
-from asteroids.entities.asteroid import Asteroid
 from asteroids.entities.asteroidfield import AsteroidField
-from asteroids.entities.shot import Shot
 from asteroids.resolution import Resolution
 from asteroids.constants import FULLSCREEN
 from asteroids.collision import handle_collisions
@@ -32,13 +30,8 @@ def main():
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
 
-    Player.containers = (updatable, drawable)
-    Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = updatable
-    Shot.containers = (shots, updatable, drawable)
-
-    player = Player(res.width / 2, res.height / 2)
-    AsteroidField()
+    player = Player(res.width / 2, res.height / 2, (shots, updatable, drawable), updatable, drawable)
+    AsteroidField((updatable, asteroids, drawable), updatable)
 
     while running:
         for event in pygame.event.get():

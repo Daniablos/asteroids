@@ -5,8 +5,8 @@ from asteroids.constants import ASTEROID_MIN_RADIUS
 
 
 class Asteroid(CircleShape):
-    def __init__(self, x, y, radius):
-        super().__init__(x, y, radius)
+    def __init__(self, x, y, radius, *groups):
+        super().__init__(x, y, radius, *groups)
 
     def split(self):
         self.kill()

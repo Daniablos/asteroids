@@ -11,10 +11,11 @@ from asteroids.constants import (
 
 
 class Player(CircleShape):
-    def __init__(self, x, y):
-        super().__init__(x, y, PLAYER_RADIUS)
+    def __init__(self, x, y, shot_groupe, *groups):
+        super().__init__(x, y, PLAYER_RADIUS, shot_groupe, *groups)
         self.rotation = 0
         self.timer = 0
+        self.shot_groupe = shot_groupe
 
     # in the player class
     def triangle(self):
@@ -36,7 +37,7 @@ class Player(CircleShape):
         self.position += forward * PLAYER_SPEED * dt
 
     def shoot(self):
-        shot = Shot(self.position.x, self.position.y)
+        shot = Shot(self.position.x, self.position.y, self.shot_groupe)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
 
     def update(self, dt):
