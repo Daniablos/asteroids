@@ -12,7 +12,7 @@ from asteroids.constants import (
 
 class Player(CircleShape):
     def __init__(self, x, y, shot_groupe, *groups):
-        super().__init__(x, y, PLAYER_RADIUS, shot_groupe, *groups)
+        super().__init__(x, y, PLAYER_RADIUS, *groups)
         self.rotation = 0
         self.timer = 0
         self.shot_groupe = shot_groupe
