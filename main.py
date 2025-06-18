@@ -5,6 +5,7 @@ from asteroids.entities.asteroidfield import AsteroidField
 from asteroids.entities.shot import Shot
 from asteroids.resolution import Resolution
 from asteroids.constants import FULLSCREEN
+from asteroids.collision import handle_collisions
 
 
 def main():
@@ -47,13 +48,7 @@ def main():
         updatable.update(dt)
         for i in drawable:
             i.draw(screen)
-        for a in asteroids:
-            for s in shots:
-                if s.collision(a) is True:
-                    a.split()
-                    s.kill()
-            if a.collision(player) is True:
-                raise SystemExit("Game over!")
+        handle_collisions(player, asteroids, shots)
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
