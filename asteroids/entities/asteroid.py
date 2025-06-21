@@ -17,6 +17,7 @@ class Asteroid(CircleShape):
     def __init__(self, x: float, y: float, radius: float, *groups: pygame.sprite.Group):
         super().__init__(x, y, radius, *groups)
         self.velocity = pygame.Vector2(0, 0)
+        self.groups = groups
         """Speed and direction of an asteroid"""
 
     def split(self):
@@ -35,8 +36,8 @@ class Asteroid(CircleShape):
         angle1 = self.velocity.rotate(random_angle)
         angle2 = self.velocity.rotate(-random_angle)
         new_radius = self.radius - ASTEROID_MIN_RADIUS
-        asteroid1 = Asteroid(self.position.x, self.position.y, new_radius)
-        asteroid2 = Asteroid(self.position.x, self.position.y, new_radius)
+        asteroid1 = Asteroid(self.position.x, self.position.y, new_radius, self.groups)
+        asteroid2 = Asteroid(self.position.x, self.position.y, new_radius, self.groups)
 
         asteroid1.velocity = angle1 * 1.2
         asteroid2.velocity = angle2 * 1.2
