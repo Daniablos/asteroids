@@ -1,4 +1,6 @@
-# 1280*720 resolution is recomended
+# TODO: Introduce game settings (global?) object that can be saved and loaded.
+
+# 1280*720 resolution is recommended
 SCREEN_WIDTH = 1280  # if 0: uses current monitor width
 SCREEN_HEIGHT = 720  # if 0: uses current monitor height
 FULLSCREEN = False

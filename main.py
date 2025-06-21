@@ -1,9 +1,9 @@
 import pygame
-from asteroids.entities.player import Player
-from asteroids.entities.asteroidfield import AsteroidField
-from asteroids.resolution import Resolution
-from asteroids.constants import FULLSCREEN
+
 from asteroids.collision import handle_collisions
+from asteroids.constants import FULLSCREEN
+from asteroids.entities import AsteroidField, Player
+from asteroids.resolution import Resolution
 
 
 def main():
@@ -13,14 +13,13 @@ def main():
     print(f"Screen width: {res.width}")
     print(f"Screen height: {res.height}")
 
+    flags = 0
     if FULLSCREEN:
-        flags = pygame.SCALED | pygame.FULLSCREEN
-    else:
-        flags = 0
+        flags |= pygame.SCALED | pygame.FULLSCREEN
 
-    screen = pygame.display.set_mode((res.width, res.height), flags)
+    screen = pygame.display.set_mode(res.size, flags)
     background = pygame.image.load("./asteroids/assets/background_space.jpg")
-    background = pygame.transform.smoothscale(background, (res.width, res.height))
+    background = pygame.transform.smoothscale(background, res.size)
     clock = pygame.time.Clock()
     dt = 0
     running = True
@@ -31,7 +30,7 @@ def main():
     shots = pygame.sprite.Group()
 
     player = Player(res.width / 2, res.height / 2, (shots, updatable, drawable), updatable, drawable)
-    AsteroidField((updatable, asteroids, drawable), updatable)
+    _ = AsteroidField((updatable, asteroids, drawable), updatable)
 
     while running:
         for event in pygame.event.get():
