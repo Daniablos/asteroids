@@ -1,6 +1,6 @@
 import pygame
 
-from asteroids.collision import handle_collisions
+from asteroids.controller import GameController
 from asteroids.constants import FULLSCREEN
 from asteroids.entities import AsteroidField, Player
 from asteroids.resolution import Resolution
@@ -31,7 +31,6 @@ def main():
 
     player = Player(res.width / 2, res.height / 2, (shots, updatable, drawable), updatable, drawable)
     _ = AsteroidField((updatable, asteroids, drawable), updatable)
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -40,7 +39,7 @@ def main():
         updatable.update(dt)
         for i in drawable:
             i.draw(screen)
-        handle_collisions(player, asteroids, shots)
+        GameController.update(player, asteroids, shots)
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
