@@ -1,5 +1,3 @@
-import random
-
 import pygame
 
 from asteroids.constants import ASTEROID_MIN_RADIUS
@@ -20,27 +18,15 @@ class Asteroid(CircleShape):
         self.groups = groups
         """Speed and direction of an asteroid"""
 
-    def split(self):
+    def split(self) -> bool:
         """
-        Destroys the asteroid and creates asteroid shards.
-        TODO: Extract asteroid creation outside the asteroid entity class.
-        TODO: Asteroid should not know how to spawn another object.
-        TODO: Asteroid may contain information that would be helpful for Controller objects to reason about splitting.
-        :return:
+        Destroys the asteroid and checks asteroid radius.
+        :return bool:
         """
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:
-            return
-
-        random_angle = random.uniform(20, 50)
-        angle1 = self.velocity.rotate(random_angle)
-        angle2 = self.velocity.rotate(-random_angle)
-        new_radius = self.radius - ASTEROID_MIN_RADIUS
-        asteroid1 = Asteroid(self.position.x, self.position.y, new_radius, self.groups)
-        asteroid2 = Asteroid(self.position.x, self.position.y, new_radius, self.groups)
-
-        asteroid1.velocity = angle1 * 1.2
-        asteroid2.velocity = angle2 * 1.2
+            return False
+        return True
 
     def draw(self, screen: pygame.Surface) -> None:
         """
