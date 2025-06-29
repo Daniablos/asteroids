@@ -1,9 +1,11 @@
 import typing
 import random
+import pygame
 
 from asteroids import entities
 from asteroids.entities import Asteroid
-from asteroids.constants import ASTEROID_MIN_RADIUS
+from asteroids.constants import ASTEROID_MIN_RADIUS, PLAYER_SHOOT_SPEED
+from .entities import Shot
 
 
 class GameController:
@@ -34,19 +36,39 @@ class GameController:
             asteroid2.velocity = angle2 * 1.2
         shot.kill()
 
+    def on_shoot(self, player: entities.Player):
+        shot = Shot(player.position.x, player.position.y, *player.shot_group)
+        shot.velocity = player.rotation * PLAYER_SHOOT_SPEED
+
     def update(
         self,
         player: entities.Player,
         asteroids: typing.Iterable[entities.Asteroid],
         shots: typing.Iterable[entities.Shot],
+        delta_time: float
     ) -> None:
         """
-        Checks for collisions between asteroids, players and shots.
+        Checks for collisions between asteroids, players, shots and keystrokes.
         :param player:
         :param asteroids:
         :param shots:
+        :param delta_time:
         :return:
         """
+        keys = pygame.key.get_pressed()
+        
+        if keys[pygame.K_a]:
+            player.rotate(-delta_time)
+        if keys[pygame.K_d]:
+            player.rotate(delta_time)
+        if keys[pygame.K_w]:
+            player.move(delta_time)
+        if keys[pygame.K_s]:
+            player.move(-delta_time)
+        if keys[pygame.K_SPACE]:
+            if player.shoot():
+                self.on_shoot(player)
+
         for asteroid in asteroids:
             for shot in shots:
                 if shot.collision(asteroid):

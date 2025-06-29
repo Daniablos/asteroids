@@ -28,8 +28,8 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
-    game_controller = GameController()
 
+    game_controller = GameController()
     player = Player(res.width / 2, res.height / 2, (shots, updatable, drawable), updatable, drawable)
     _ = AsteroidField((updatable, asteroids, drawable), updatable)
     while running:
@@ -40,7 +40,7 @@ def main():
         updatable.update(dt)
         for i in drawable:
             i.draw(screen)
-        game_controller.update(player, asteroids, shots)
+        game_controller.update(player, asteroids, shots, dt)
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 

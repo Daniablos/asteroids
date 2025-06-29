@@ -3,26 +3,28 @@ import pygame
 from asteroids.constants import (
     PLAYER_RADIUS,
     PLAYER_TURN_SPEED,
-    PLAYER_SHOOT_SPEED,
     PLAYER_SHOOT_COOLDOWN,
     PLAYER_SPEED,
 )
 from .circleshape import CircleShape
-from .shot import Shot
 
-__all__ = ['Player']
+__all__ = ["Player"]
 
 
 class Player(CircleShape):
     """
     Player entity.
     """
-    __slots__ = ['timer', 'shot_group']
 
-    def __init__(self,
-                 x: float, y: float,
-                 shot_group: tuple[pygame.sprite.Group, ...],
-                 *groups: pygame.sprite.Group):
+    __slots__ = ["timer", "shot_group"]
+
+    def __init__(
+        self,
+        x: float,
+        y: float,
+        shot_group: tuple[pygame.sprite.Group, ...],
+        *groups: pygame.sprite.Group,
+    ):
         super().__init__(x, y, PLAYER_RADIUS, *groups)
         self.timer: float = 0
         """Player shooting cooldown timer"""
@@ -67,38 +69,21 @@ class Player(CircleShape):
         forward = self.rotation
         self.position += forward * PLAYER_SPEED * delta_time
 
-    def shoot(self) -> None:
+    def shoot(self) -> bool:
         """
-        Shoots the bullet from the player.
-
-        TODO: extract bullet creation from the player.
-        TODO: Player should only know about itself
-        TODO: Player may include reload timer and other shooting related info, but bullet creation must be outside.
-        :return:
+        Checks and updates player timer 
+        :return bool:
         """
-        shot = Shot(self.position.x, self.position.y, *self.shot_group)
-        shot.velocity = self.rotation * PLAYER_SHOOT_SPEED
+        if self.timer == 0:
+            self.timer = PLAYER_SHOOT_COOLDOWN
+            return True
+        return False
 
     def update(self, delta_time: float) -> None:
         """
-        Updates the player.
+        Updates the player timer
         :param delta_time:
         :return:
         """
-        keys = pygame.key.get_pressed()
-        self.timer -= delta_time
+        self.timer = max(self.timer - delta_time, 0)
 
-        # TODO: Extract controls to a settings object (may be global variable).
-        if keys[pygame.K_a]:
-            self.rotate(-delta_time)
-        if keys[pygame.K_d]:
-            self.rotate(delta_time)
-        if keys[pygame.K_w]:
-            self.move(delta_time)
-        if keys[pygame.K_s]:
-            self.move(-delta_time)
-        # TODO: Extract shooting logic outside the player class.
-        if keys[pygame.K_SPACE]:
-            if self.timer <= 0:
-                self.shoot()
-                self.timer = PLAYER_SHOOT_COOLDOWN
