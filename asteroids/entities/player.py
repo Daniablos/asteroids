@@ -71,8 +71,8 @@ class Player(CircleShape):
 
     def shoot(self) -> bool:
         """
-        Checks and updates player timer 
-        :return bool:
+        Checks and updates the player timer.
+        :return:
         """
         if self.timer == 0:
             self.timer = PLAYER_SHOOT_COOLDOWN
@@ -81,7 +81,7 @@ class Player(CircleShape):
 
     def update(self, delta_time: float) -> None:
         """
-        Updates the player timer
+        Updates the player timer.
         :param delta_time:
         :return:
         """

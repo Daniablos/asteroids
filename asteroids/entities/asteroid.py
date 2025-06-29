@@ -21,7 +21,7 @@ class Asteroid(CircleShape):
     def split(self) -> bool:
         """
         Destroys the asteroid and checks asteroid radius.
-        :return bool:
+        :return:
         """
         self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:

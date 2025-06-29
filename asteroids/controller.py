@@ -37,6 +37,11 @@ class GameController:
         shot.kill()
 
     def on_shoot(self, player: entities.Player):
+        """
+        Creates shot.
+        :param player:
+        :return:
+        """
         shot = Shot(player.position.x, player.position.y, *player.shot_group)
         shot.velocity = player.rotation * PLAYER_SHOOT_SPEED
 
