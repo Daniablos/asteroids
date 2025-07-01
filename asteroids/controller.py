@@ -10,7 +10,8 @@ from .entities import Shot
 
 class GameController:
     def __init__(self):
-        pass
+        self.event = 0
+        self.paused = False
 
     def on_asteroid_kill(
         self, asteroid: entities.Asteroid, shot: entities.Shot
@@ -79,5 +80,4 @@ class GameController:
                 if shot.collision(asteroid):
                     self.on_asteroid_kill(asteroid, shot)
             if asteroid.collision(player):
-                # TODO: Introduce graceful shutdown/exit.
-                raise SystemExit("Game over!")
+                self.event = 1
