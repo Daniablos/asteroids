@@ -1,17 +1,72 @@
-import typing
 import random
 import pygame
 
+from asteroids.resolution import Resolution
 from asteroids import entities
 from asteroids.entities import Asteroid
 from asteroids.constants import ASTEROID_MIN_RADIUS, PLAYER_SHOOT_SPEED
-from .entities import Shot
+from .entities import Shot, Player, AsteroidField
+
+GAME_RUNNING_STATE = 0
+GAME_OVER_STATE = 1
 
 
 class GameController:
-    def __init__(self):
-        self.event = 0
-        self.paused = False
+    def __init__(self, screen: pygame.Surface, resolution: Resolution):
+        self.init()
+        self.screen = screen
+        self.resolution = resolution
+        self.screen_center = (self.resolution.width / 2, self.resolution.height / 2)
+        """Text for 'Game over' state"""
+        font = pygame.font.Font(None, 32)
+        self.game_over_text = font.render(
+            "Game over! Restart? (Y/N)", True, "white", None
+        )
+        self.game_over_textRect = self.game_over_text.get_rect(
+            center=self.screen_center
+        )
+
+    def init(self):
+        """Groups for game objects"""
+        self.updatable = pygame.sprite.Group()
+        self.drawable = pygame.sprite.Group()
+        self.asteroids = pygame.sprite.Group()
+        self.shots = pygame.sprite.Group()
+        """State of the game"""
+        self.state = GAME_RUNNING_STATE
+
+    def spawn_player(self) -> None:
+        """
+        Spawns player at center of screen
+        :return:
+        """
+        self.player = Player(
+            self.screen_center[0],
+            self.screen_center[1],
+            (self.shots, self.updatable, self.drawable),
+            self.updatable,
+            self.drawable,
+        )
+
+    def spawn_asteroid_field(self) -> None:
+        """
+        Spawns asteroid field
+        :return:
+        """
+        self.asteroid_field = AsteroidField(
+            (self.updatable, self.asteroids, self.drawable), self.updatable
+        )
+
+    def clear(self) -> None:
+        """
+        Clears screen from entities
+        :return:
+        """
+        self.player.kill()
+        for asteroid in self.asteroids:
+            asteroid.kill()
+        for shot in self.shots:
+            shot.kill()
 
     def on_asteroid_kill(
         self, asteroid: entities.Asteroid, shot: entities.Shot
@@ -46,38 +101,58 @@ class GameController:
         shot = Shot(player.position.x, player.position.y, *player.shot_group)
         shot.velocity = player.rotation * PLAYER_SHOOT_SPEED
 
-    def update(
-        self,
-        player: entities.Player,
-        asteroids: typing.Iterable[entities.Asteroid],
-        shots: typing.Iterable[entities.Shot],
-        delta_time: float
-    ) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """
-        Checks for collisions between asteroids, players, shots and keystrokes.
-        :param player:
-        :param asteroids:
-        :param shots:
+        Draws entities and interface on the screen
+        :return:
+        """
+        for entity in self.drawable:
+            entity.draw(screen)
+
+        if self.state == GAME_OVER_STATE:
+            screen.blit(self.game_over_text, self.game_over_textRect)
+
+    def update(self, delta_time: float) -> bool:
+        """
+
+        Updates entities, entity collision and game state
         :param delta_time:
         :return:
         """
-        keys = pygame.key.get_pressed()
-        
-        if keys[pygame.K_a]:
-            player.rotate(-delta_time)
-        if keys[pygame.K_d]:
-            player.rotate(delta_time)
-        if keys[pygame.K_w]:
-            player.move(delta_time)
-        if keys[pygame.K_s]:
-            player.move(-delta_time)
-        if keys[pygame.K_SPACE]:
-            if player.shoot():
-                self.on_shoot(player)
 
-        for asteroid in asteroids:
-            for shot in shots:
-                if shot.collision(asteroid):
-                    self.on_asteroid_kill(asteroid, shot)
-            if asteroid.collision(player):
-                self.event = 1
+        keys = pygame.key.get_pressed()
+
+        if self.state == GAME_RUNNING_STATE:
+            # player movement and shooting
+            self.updatable.update(delta_time)
+            if keys[pygame.K_a]:
+                self.player.rotate(-delta_time)
+            if keys[pygame.K_d]:
+                self.player.rotate(delta_time)
+            if keys[pygame.K_w]:
+                self.player.move(delta_time)
+            if keys[pygame.K_s]:
+                self.player.move(-delta_time)
+            if keys[pygame.K_SPACE]:
+                if self.player.shoot():
+                    self.on_shoot(self.player)
+
+            # collision detection
+            for asteroid in self.asteroids:
+                for shot in self.shots:
+                    if shot.collision(asteroid):
+                        self.on_asteroid_kill(asteroid, shot)
+                if asteroid.collision(self.player):
+                    self.state = GAME_OVER_STATE
+
+        if self.state == GAME_OVER_STATE:
+            # restart
+            if keys[pygame.K_y]:
+                self.clear()
+                self.spawn_player()
+                self.state = GAME_RUNNING_STATE
+
+            # quit
+            if keys[pygame.K_n]:
+                return False
+        return True
