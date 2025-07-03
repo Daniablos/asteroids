@@ -6,6 +6,7 @@ from asteroids import entities
 from asteroids.entities import Asteroid
 from asteroids.constants import ASTEROID_MIN_RADIUS, PLAYER_SHOOT_SPEED
 from .entities import Shot, Player, AsteroidField
+from .systems import GameOver, Scoring
 
 GAME_RUNNING_STATE = 0
 GAME_OVER_STATE = 1
@@ -16,15 +17,7 @@ class GameController:
         self.init()
         self.screen = screen
         self.resolution = resolution
-        self.screen_center = (self.resolution.width / 2, self.resolution.height / 2)
-        """Text for 'Game over' state"""
-        font = pygame.font.Font(None, 32)
-        self.game_over_text = font.render(
-            "Game over! Restart? (Y/N)", True, "white", None
-        )
-        self.game_over_textRect = self.game_over_text.get_rect(
-            center=self.screen_center
-        )
+
 
     def init(self):
         """Groups for game objects"""
@@ -35,14 +28,29 @@ class GameController:
         """State of the game"""
         self.state = GAME_RUNNING_STATE
 
+    def game_over_init(self) -> None:
+        """
+        Game over system initialization
+        :return:
+        """
+        self.game_over = GameOver(self.resolution)
+
+    def score_system_init(self) -> None:
+        """
+        Score system initialization
+        :return:
+        """
+        self.scoring = Scoring()
+
+
     def spawn_player(self) -> None:
         """
         Spawns player at center of screen
         :return:
         """
         self.player = Player(
-            self.screen_center[0],
-            self.screen_center[1],
+            self.resolution.width / 2,
+            self.resolution.height / 2,
             (self.shots, self.updatable, self.drawable),
             self.updatable,
             self.drawable,
@@ -59,9 +67,10 @@ class GameController:
 
     def clear(self) -> None:
         """
-        Clears screen from entities
+        Clears screen from entities and resets score
         :return:
         """
+        self.scoring.score = 0
         self.player.kill()
         for asteroid in self.asteroids:
             asteroid.kill()
@@ -92,7 +101,7 @@ class GameController:
             asteroid2.velocity = angle2 * 1.2
         shot.kill()
 
-    def on_shoot(self, player: entities.Player):
+    def on_shoot(self, player: entities.Player) -> None:
         """
         Creates shot.
         :param player:
@@ -104,18 +113,21 @@ class GameController:
     def draw(self, screen: pygame.Surface) -> None:
         """
         Draws entities and interface on the screen
+        :param screen:
         :return:
         """
+        self.scoring.draw(screen)
         for entity in self.drawable:
             entity.draw(screen)
 
         if self.state == GAME_OVER_STATE:
-            screen.blit(self.game_over_text, self.game_over_textRect)
+            self.game_over.draw(screen, self.scoring.score)
+            
 
     def update(self, delta_time: float) -> bool:
         """
 
-        Updates entities, entity collision and game state
+        Updates entities, entity collision, systems and game state
         :param delta_time:
         :return:
         """
@@ -123,6 +135,7 @@ class GameController:
         keys = pygame.key.get_pressed()
 
         if self.state == GAME_RUNNING_STATE:
+            self.scoring.update(delta_time)
             # player movement and shooting
             self.updatable.update(delta_time)
             if keys[pygame.K_a]:
@@ -141,6 +154,7 @@ class GameController:
             for asteroid in self.asteroids:
                 for shot in self.shots:
                     if shot.collision(asteroid):
+                        self.scoring.add_points_kill()
                         self.on_asteroid_kill(asteroid, shot)
                 if asteroid.collision(self.player):
                     self.state = GAME_OVER_STATE

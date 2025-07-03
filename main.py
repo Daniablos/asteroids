@@ -22,10 +22,12 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
     running = True
-
+    # initialization
     game_controller = GameController(screen, res)
     game_controller.spawn_player()
     game_controller.spawn_asteroid_field()
+    game_controller.game_over_init()
+    game_controller.score_system_init()
 
     while running:
         for event in pygame.event.get():
