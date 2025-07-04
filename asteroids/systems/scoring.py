@@ -1,11 +1,11 @@
-import pygame
-
-
-class Scoring():
+class Scoring:
     """Score system"""
+
     def __init__(self):
+        """Score counter"""
         self.score: int = 0
-        self.font = pygame.font.Font(None, 72)
+
+        """Timer for adding points"""
         self.time: float = 0
 
     def update(self, delta_time: float) -> None:
@@ -18,24 +18,17 @@ class Scoring():
         if self.time >= 1:
             self.time = 0
             self.score += 10
-        
 
     def add_points_kill(self) -> None:
         """
         Adds points
         :return:
         """
-        self.score +=100
+        self.score += 100
 
-    def draw(self, screen: pygame.Surface) -> None:
+    def get_score(self) -> int:
         """
-        Draws score on the screen
-        :param screen:
+        Returns score
         :return:
         """
-        self.text = self.font.render(
-            f"{round(self.score)}", True, "white", None
-        )
-        screen.blit(self.text, (0, 0))
-
-        
+        return self.score

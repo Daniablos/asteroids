@@ -6,7 +6,8 @@ from asteroids import entities
 from asteroids.entities import Asteroid
 from asteroids.constants import ASTEROID_MIN_RADIUS, PLAYER_SHOOT_SPEED
 from .entities import Shot, Player, AsteroidField
-from .systems import GameOver, Scoring
+from .systems import Scoring
+from .userinterface import GameOver, ScoreDisplay, LifeDisplay
 
 GAME_RUNNING_STATE = 0
 GAME_OVER_STATE = 1
@@ -28,14 +29,17 @@ class GameController:
         """State of the game"""
         self.state = GAME_RUNNING_STATE
 
-    def game_over_init(self) -> None:
+    def ui_init(self):
         """
-        Game over system initialization
+        User interface initialization
         :return:
         """
+        self.score_display = ScoreDisplay()
         self.game_over = GameOver(self.resolution)
+        self.life_display = LifeDisplay(self.resolution)
 
-    def score_system_init(self) -> None:
+
+    def systems_init(self) -> None:
         """
         Score system initialization
         :return:
@@ -112,11 +116,12 @@ class GameController:
 
     def draw(self, screen: pygame.Surface) -> None:
         """
-        Draws entities and interface on the screen
+        Draws entities and UI on the screen
         :param screen:
         :return:
         """
-        self.scoring.draw(screen)
+        self.life_display.draw(screen, self.player.get_life())
+        self.score_display.draw(screen, self.scoring.get_score())
         for entity in self.drawable:
             entity.draw(screen)
 
@@ -126,7 +131,6 @@ class GameController:
 
     def update(self, delta_time: float) -> bool:
         """
-
         Updates entities, entity collision, systems and game state
         :param delta_time:
         :return:
@@ -156,8 +160,12 @@ class GameController:
                     if shot.collision(asteroid):
                         self.scoring.add_points_kill()
                         self.on_asteroid_kill(asteroid, shot)
-                if asteroid.collision(self.player):
-                    self.state = GAME_OVER_STATE
+                if asteroid.collision(self.player):             
+                    if self.player.is_alive():
+                        self.player.lose_life()
+                        asteroid.kill()
+                    else: 
+                        self.state = GAME_OVER_STATE
 
         if self.state == GAME_OVER_STATE:
             # restart
