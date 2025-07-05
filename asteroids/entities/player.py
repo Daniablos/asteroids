@@ -30,7 +30,7 @@ class Player(CircleShape):
         """Player shooting cooldown timer"""
         self.shot_group = shot_group
         """Entity groups for bullet creation"""
-        self.life = 3
+        self.health = 3
         """Player's life count"""
 
     def triangle(self) -> tuple[pygame.Vector2, pygame.Vector2, pygame.Vector2]:
@@ -46,26 +46,20 @@ class Player(CircleShape):
 
         return a, b, c
 
-    def get_life(self) -> int:
-        """
-        Returns player health
-        :return:
-        """
-        return self.life
 
     def lose_life(self) -> None:
         """
         Substracts player health
         :return:
         """
-        self.life -= 1
+        self.health -= 1
 
     def is_alive(self) -> bool:
         """
         Check player health
         :return:
         """
-        if self.life == 0:
+        if self.health == 0:
             return False
         return True
 

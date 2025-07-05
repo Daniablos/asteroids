@@ -1,12 +1,11 @@
 class Scoring:
     """Score system"""
 
-    def __init__(self):
-        """Score counter"""
+    def __init__(self):      
         self.score: int = 0
-
-        """Timer for adding points"""
+        """Score counter"""
         self.time: float = 0
+        """Timer for adding points"""
 
     def update(self, delta_time: float) -> None:
         """
@@ -21,14 +20,8 @@ class Scoring:
 
     def add_points_kill(self) -> None:
         """
-        Adds points
+        Adds points for destroying asteroids to the score counter.
         :return:
         """
         self.score += 100
 
-    def get_score(self) -> int:
-        """
-        Returns score
-        :return:
-        """
-        return self.score

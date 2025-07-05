@@ -24,10 +24,7 @@ def main():
     running = True
     # initialization
     game_controller = GameController(screen, res)
-    game_controller.spawn_player()
-    game_controller.spawn_asteroid_field()
-    game_controller.ui_init()
-    game_controller.systems_init()
+    game_controller.start()
 
     while running:
         for event in pygame.event.get():

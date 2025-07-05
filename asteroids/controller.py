@@ -7,7 +7,7 @@ from asteroids.entities import Asteroid
 from asteroids.constants import ASTEROID_MIN_RADIUS, PLAYER_SHOOT_SPEED
 from .entities import Shot, Player, AsteroidField
 from .systems import Scoring
-from .userinterface import GameOver, ScoreDisplay, LifeDisplay
+from .userinterface import GameOver, ScoreDisplay, HealthDisplay
 
 GAME_RUNNING_STATE = 0
 GAME_OVER_STATE = 1
@@ -18,6 +18,7 @@ class GameController:
         self.init()
         self.screen = screen
         self.resolution = resolution
+        """Resolution info"""
 
 
     def init(self):
@@ -26,8 +27,20 @@ class GameController:
         self.drawable = pygame.sprite.Group()
         self.asteroids = pygame.sprite.Group()
         self.shots = pygame.sprite.Group()
-        """State of the game"""
+        
         self.state = GAME_RUNNING_STATE
+        """State of the game"""
+
+    def start(self) -> None:
+        """
+        Start initialization of UI, systems, entities
+        :return:
+        """
+        self.spawn_player()
+        self.spawn_asteroid_field()
+        self.ui_init()
+        self.systems_init()
+
 
     def ui_init(self):
         """
@@ -36,7 +49,7 @@ class GameController:
         """
         self.score_display = ScoreDisplay()
         self.game_over = GameOver(self.resolution)
-        self.life_display = LifeDisplay(self.resolution)
+        self.health_display = HealthDisplay(self.resolution)
 
 
     def systems_init(self) -> None:
@@ -68,6 +81,7 @@ class GameController:
         self.asteroid_field = AsteroidField(
             (self.updatable, self.asteroids, self.drawable), self.updatable
         )
+
 
     def clear(self) -> None:
         """
@@ -120,8 +134,8 @@ class GameController:
         :param screen:
         :return:
         """
-        self.life_display.draw(screen, self.player.get_life())
-        self.score_display.draw(screen, self.scoring.get_score())
+        self.health_display.draw(screen, self.player.health)
+        self.score_display.draw(screen, self.scoring.score)
         for entity in self.drawable:
             entity.draw(screen)
 
