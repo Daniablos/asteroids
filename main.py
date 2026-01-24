@@ -27,11 +27,12 @@ def main():
     game_controller.start()
 
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
         screen.blit(background, (0, 0))
-        if not game_controller.update(dt):
+        if not game_controller.update(dt, events):
             running = False
         game_controller.draw(screen)
         pygame.display.flip()

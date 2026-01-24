@@ -7,11 +7,11 @@ from asteroids.entities import Asteroid
 from asteroids.constants import ASTEROID_MIN_RADIUS, PLAYER_SHOOT_SPEED
 from .entities import Shot, Player, AsteroidField
 from .systems import Scoring
-from .userinterface import GameOver, ScoreDisplay, HealthDisplay
+from .userinterface import GameOver, ScoreDisplay, HealthDisplay, HighScore
 
 GAME_RUNNING_STATE = 0
 GAME_OVER_STATE = 1
-
+HIGH_SCORE_STATE = 2
 
 class GameController:
     def __init__(self, screen: pygame.Surface, resolution: Resolution):
@@ -38,9 +38,8 @@ class GameController:
         """
         self.spawn_player()
         self.spawn_asteroid_field()
-        self.ui_init()
         self.systems_init()
-
+        self.ui_init()
 
     def ui_init(self):
         """
@@ -48,8 +47,9 @@ class GameController:
         :return:
         """
         self.score_display = ScoreDisplay()
-        self.game_over = GameOver(self.resolution)
+        self.game_over = GameOver(self.resolution, self.scoring.get_leaderboard())
         self.health_display = HealthDisplay(self.resolution)
+        self.high_score = HighScore(self.resolution)
 
 
     def systems_init(self) -> None:
@@ -138,18 +138,20 @@ class GameController:
         self.score_display.draw(screen, self.scoring.score)
         for entity in self.drawable:
             entity.draw(screen)
+        
+        if self.state == HIGH_SCORE_STATE:
+            self.high_score.draw(screen, self.scoring.score)
 
         if self.state == GAME_OVER_STATE:
             self.game_over.draw(screen, self.scoring.score)
             
 
-    def update(self, delta_time: float) -> bool:
+    def update(self, delta_time: float, events: list[pygame.event.Event]) -> bool:
         """
         Updates entities, entity collision, systems and game state
         :param delta_time:
         :return:
         """
-
         keys = pygame.key.get_pressed()
 
         if self.state == GAME_RUNNING_STATE:
@@ -178,8 +180,20 @@ class GameController:
                     if self.player.is_alive():
                         self.player.lose_life()
                         asteroid.kill()
-                    else: 
-                        self.state = GAME_OVER_STATE
+                    else:
+                        if self.scoring.score > self.scoring.get_highest_score():
+                            self.state = HIGH_SCORE_STATE
+                            self.high_score.name = ""        # чистое поле ввода
+                            self.high_score.done = False
+                        else:
+                            self.state = GAME_OVER_STATE
+
+        if self.state == HIGH_SCORE_STATE:
+            self.high_score.update(events)
+            if self.high_score.done:
+                self.scoring.add_high_score(self.high_score.name, self.scoring.score)
+                self.game_over.leaderboard = self.scoring.get_leaderboard()
+                self.state = GAME_OVER_STATE
 
         if self.state == GAME_OVER_STATE:
             # restart
