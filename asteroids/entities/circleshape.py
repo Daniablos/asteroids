@@ -1,3 +1,14 @@
+"""Базовый модуль для всего круглого, что сталкивается и рисуется.
+
+CircleShape
+-----------
+Абстрактный базовый класс, объединяющий:
+- круговую коллизию (collision);
+- удобное хранение позиции, радиуса и направления;
+- обязательные для переопределения draw() и update().
+
+Наследуется от pygame.sprite.Sprite, поэтому спокойно живёт в группах спрайтов.
+"""
 from abc import abstractmethod, ABC
 
 import pygame
@@ -39,7 +50,7 @@ class CircleShape(pygame.sprite.Sprite, ABC):
         """
 
     @abstractmethod
-    def update(self, dt: float) -> None:
+    def update(self, delta_time: float) -> None:
         """
         Update the shape.
 

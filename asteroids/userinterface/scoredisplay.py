@@ -1,6 +1,15 @@
+"""
+Модуль интерфейса игрового счета.
+
+Определяет класс ScoreDisplay, который отвечает за постоянное отображение 
+текущего количества очков игрока в левом верхнем углу экрана во время сессии.
+"""
+
 import pygame
 
 from asteroids.constants import FONT_SIZE
+
+#pylint: disable=too-few-public-methods
 
 class ScoreDisplay:
     """Score display"""

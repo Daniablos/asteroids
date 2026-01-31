@@ -1,8 +1,16 @@
+"""
+Модуль интерфейса состояния игрока.
+
+Предоставляет класс HealthDisplay для визуализации оставшегося количества 
+очков прочности (HP) или жизней игрока в углу экрана во время игрового процесса.
+"""
+
 import pygame
 
 from asteroids.resolution import Resolution
 from asteroids.constants import FONT_SIZE
 
+#pylint: disable=too-few-public-methods
 
 class HealthDisplay:
     """Player health display"""

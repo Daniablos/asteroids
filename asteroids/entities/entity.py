@@ -1,6 +1,17 @@
+"""Протоколы для игровых объектов.
+
+Предоставляет два typing.Protocol:
+- Drawable — для всего, что умеет рисоваться на pygame.Surface;
+- Updatable — для всего, что обновляет своё состояние по delta_time.
+
+Используйте при объявлении компонентов, чтобы не привязываться к конкретным
+классам, а проверять только наличие нужных методов (структурная типизация).
+"""
 from typing import Protocol
 
 import pygame
+
+#pylint: disable=too-few-public-methods
 
 __all__ = ['Drawable', 'Updatable']
 

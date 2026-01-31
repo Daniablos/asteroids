@@ -1,3 +1,5 @@
+"""Утилита для получения разрешения окна игры Asteroids."""
+
 import pygame
 
 from asteroids.constants import SCREEN_HEIGHT, SCREEN_WIDTH
@@ -19,7 +21,6 @@ class Resolution:
     def size(self) -> tuple[int, int]:
         """
         Returns the (width, height) of the resolution.
-        :return:
         """
         return self.width, self.height
 
@@ -27,7 +28,6 @@ class Resolution:
     def info(cls) -> 'Resolution':
         """
         Calculates windows resolution depending on settings and display info.
-        :return:
         """
         info = pygame.display.Info()
         height = SCREEN_HEIGHT or info.current_h

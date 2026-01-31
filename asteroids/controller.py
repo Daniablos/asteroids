@@ -1,3 +1,4 @@
+"""Главный контроллер игры"""
 import random
 import pygame
 
@@ -9,17 +10,35 @@ from .entities import Shot, Player, AsteroidField
 from .systems import Scoring
 from .userinterface import GameOver, ScoreDisplay, HealthDisplay, HighScore
 
+
+# pylint: disable=too-many-instance-attributes
+
 GAME_RUNNING_STATE = 0
 GAME_OVER_STATE = 1
 HIGH_SCORE_STATE = 2
 
 class GameController:
+    """
+    Управляет жизненным циклом игры: спавн объектов, обработка ввода,
+    коллизии, подсчёт очков, состояния 'running / game-over / high-score'.
+    """
     def __init__(self, screen: pygame.Surface, resolution: Resolution):
         self.init()
         self.screen = screen
         self.resolution = resolution
         """Resolution info"""
+        self.state = GAME_RUNNING_STATE
+        """State of the game"""
 
+        #Системы и UI
+        self.scoring: Scoring | None = None
+        self.player: Player | None = None
+        self.asteroid_field: AsteroidField | None = None
+
+        self.score_display: ScoreDisplay | None = None
+        self.game_over: GameOver | None = None
+        self.health_display: HealthDisplay | None = None
+        self.high_score: HighScore | None = None
 
     def init(self):
         """Groups for game objects"""
@@ -27,9 +46,6 @@ class GameController:
         self.drawable = pygame.sprite.Group()
         self.asteroids = pygame.sprite.Group()
         self.shots = pygame.sprite.Group()
-        
-        self.state = GAME_RUNNING_STATE
-        """State of the game"""
 
     def start(self) -> None:
         """
@@ -138,13 +154,11 @@ class GameController:
         self.score_display.draw(screen, self.scoring.score)
         for entity in self.drawable:
             entity.draw(screen)
-        
         if self.state == HIGH_SCORE_STATE:
             self.high_score.draw(screen, self.scoring.score)
 
         if self.state == GAME_OVER_STATE:
             self.game_over.draw(screen, self.scoring.score)
-            
 
     def update(self, delta_time: float, events: list[pygame.event.Event]) -> bool:
         """
@@ -155,47 +169,15 @@ class GameController:
         keys = pygame.key.get_pressed()
 
         if self.state == GAME_RUNNING_STATE:
-            self.scoring.update(delta_time)
-            # player movement and shooting
-            self.updatable.update(delta_time)
-            if keys[pygame.K_a]:
-                self.player.rotate(-delta_time)
-            if keys[pygame.K_d]:
-                self.player.rotate(delta_time)
-            if keys[pygame.K_w]:
-                self.player.move(delta_time)
-            if keys[pygame.K_s]:
-                self.player.move(-delta_time)
-            if keys[pygame.K_SPACE]:
-                if self.player.shoot():
-                    self.on_shoot(self.player)
-
-            # collision detection
-            for asteroid in self.asteroids:
-                for shot in self.shots:
-                    if shot.collision(asteroid):
-                        self.scoring.add_points_kill()
-                        self.on_asteroid_kill(asteroid, shot)
-                if asteroid.collision(self.player):             
-                    if self.player.is_alive():
-                        self.player.lose_life()
-                        asteroid.kill()
-                    else:
-                        if self.scoring.score > self.scoring.get_highest_score():
-                            self.state = HIGH_SCORE_STATE
-                            self.high_score.name = ""        # чистое поле ввода
-                            self.high_score.done = False
-                        else:
-                            self.state = GAME_OVER_STATE
-
-        if self.state == HIGH_SCORE_STATE:
+            self._update_running(delta_time, keys)
+        elif self.state == HIGH_SCORE_STATE:
             self.high_score.update(events)
             if self.high_score.done:
                 self.scoring.add_high_score(self.high_score.name, self.scoring.score)
                 self.game_over.leaderboard = self.scoring.get_leaderboard()
                 self.state = GAME_OVER_STATE
 
-        if self.state == GAME_OVER_STATE:
+        elif self.state == GAME_OVER_STATE:
             # restart
             if keys[pygame.K_y]:
                 self.clear()
@@ -206,3 +188,40 @@ class GameController:
             if keys[pygame.K_n]:
                 return False
         return True
+
+    def _update_running(self, delta_time: float, keys: tuple[bool, ...]) -> None:
+        """Логика состояния GAME_RUNNING_STATE."""
+        self.scoring.update(delta_time)
+            # player movement and shooting
+        self.updatable.update(delta_time)
+        if keys[pygame.K_a]:
+            self.player.rotate(-delta_time)
+        if keys[pygame.K_d]:
+            self.player.rotate(delta_time)
+        if keys[pygame.K_w]:
+            self.player.move(delta_time)
+        if keys[pygame.K_s]:
+            self.player.move(-delta_time)
+        if keys[pygame.K_SPACE]:
+            if self.player.shoot():
+                self.on_shoot(self.player)
+        self._update_collisions()
+
+    def _update_collisions(self):
+        """Логика столкновений"""
+        for asteroid in self.asteroids:
+            for shot in self.shots:
+                if shot.collision(asteroid):
+                    self.scoring.add_points_kill()
+                    self.on_asteroid_kill(asteroid, shot)
+            if asteroid.collision(self.player):
+                if self.player.is_alive():
+                    self.player.lose_life()
+                    asteroid.kill()
+                else:
+                    if self.scoring.score > self.scoring.get_highest_score():
+                        self.state = HIGH_SCORE_STATE
+                        self.high_score.name = ""        # чистое поле ввода
+                        self.high_score.done = False
+                    else:
+                        self.state = GAME_OVER_STATE

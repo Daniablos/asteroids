@@ -1,9 +1,18 @@
+"""
+Модуль системы подсчета очков и хранения рекордов.
+
+Обеспечивает отслеживание текущего счета игрока, логику начисления баллов 
+за время и уничтожение целей, а также взаимодействие с SQLite базой данных 
+для хранения таблицы лидеров.
+"""
+
 import sqlite3
+
 
 class Scoring:
     """Score system"""
 
-    def __init__(self):      
+    def __init__(self) -> None:
         self.score: int = 0
         """Score counter"""
         self.time: float = 0
@@ -12,14 +21,14 @@ class Scoring:
         """Создает и/или соединяется с базой данных."""
         self.cursor = self.conn_db.cursor()
         """Инструмент для ввода SQL команд."""
-        #Создание таблицы рекордов
-        self.cursor.execute('''
+        #Инициализация таблицы
+        self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS high_scores (
                 player_name TEXT NOT NULL,
                 score INTEGER NOT NULL
             )
-        ''')
-        
+        """)
+
         self.conn_db.commit()
 
     def update(self, delta_time: float) -> None:
@@ -44,21 +53,25 @@ class Scoring:
         """
         Добавление рекорда в таблицу рекордов
         """
-        self.cursor.execute("INSERT INTO high_scores (player_name, score) VALUES (?, ?)", (name, score))
+        self.cursor.execute(
+            "INSERT INTO high_scores (player_name, score) VALUES (?, ?)", (name, score)
+        )
         self.conn_db.commit()
-
 
     def get_highest_score(self) -> int:
         """
-        Извлечение лучшего результата из таблицы рекордов 
+        Извлечение лучшего результата из таблицы рекордов
         """
         self.cursor.execute("SELECT score FROM high_scores ORDER BY score DESC LIMIT 1")
         result = self.cursor.fetchall()
         return result[0][0] if result else 0
-    
+
     def get_leaderboard(self, limit=3) -> list[tuple]:
         """
         Извлечение лучших результатов из таблицы рекордов
         """
-        self.cursor.execute("SELECT player_name, score FROM high_scores ORDER BY score DESC LIMIT ?", (limit,))
+        self.cursor.execute(
+            "SELECT player_name, score FROM high_scores ORDER BY score DESC LIMIT ?",
+            (limit,),
+        )
         return self.cursor.fetchall()

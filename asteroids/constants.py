@@ -1,3 +1,5 @@
+"""Настройки игры"""
+
 # TODO: Introduce game settings (global?) object that can be saved and loaded.
 
 # 1280*720 resolution is recommended
