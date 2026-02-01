@@ -1,3 +1,4 @@
+#pylint: disable=missing-module-docstring
 from .asteroid import *
 from .asteroidfield import *
 from .circleshape import *

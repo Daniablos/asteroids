@@ -6,7 +6,6 @@ from asteroids.controller import GameController
 from asteroids.constants import FULLSCREEN
 from asteroids.resolution import Resolution
 
-
 def main():
     """
     Главная функция игры Asteroids.
